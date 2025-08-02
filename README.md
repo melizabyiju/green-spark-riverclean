@@ -20,7 +20,7 @@ Water pollution in rivers is a critical environmental issue, often going unrepor
 - Authority notification for polluted reports.
   
 ## GitHub Repository Link
-<!-- Paste your public repo link here -->
+[<!-- Paste your public repo link here -->](https://github.com/melizabyiju/green-spark-riverclean)
 
 ## Team Members & Roles
 - Meliza Mariya Byijy – Role
@@ -28,34 +28,7 @@ Water pollution in rivers is a critical environmental issue, often going unrepor
 - Eren Joseph Binu
 
 ## Screenshot
-Include a screenshot of your project UI or working demo:
-
-```md
+### RiverClean Home Page
+![Screenshot]
 ![Screenshot](./assets/screenshot.png)
 
-Additional Notes (Optional)
-
-Any challenges faced, tech stack used, or future plans.
-
----
-
-## 📤 How to Submit
-
-1. Complete your work before **9:00 PM IST**.
-2. Make sure your GitHub repository is public.
-3. Ensure all required files are pushed.
-4. Share the repository link via the assigned platform/medium.
-
----
-
-## 🧑‍⚖️ Judging Criteria
-
-Submissions will be evaluated on:
-
-- Relevance to the problem statement
-- Working functionality
-- Technical depth
-- Design & usability
-- Creativity and real-world impact
-
----
