@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RiverClean – Detection Result</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #eaf6fb;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 420px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.11);
+      padding: 32px 24px 24px 24px;
+      text-align: center;
+    }
+    h1 {
+      color: #0f62fe;
+      margin-bottom: 18px;
+      font-size: 2em;
+    }
+    .result {
+      margin: 28px 0;
+      padding: 16px;
+      background: #f1f8fe;
+      border-radius: 8px;
+      font-size: 1.15em;
+      font-weight: bold;
+      color: {% if result == "Polluted" %}#b00020{% else %}#218c36{% endif %};
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #777;
+      font-size: 0.95em;
+    }
+    .back-link {
+      margin-top: 28px;
+      display: inline-block;
+      color: #0f62fe;
+      text-decoration: none;
+      font-weight: 600;
+      border: 1px solid #0f62fe;
+      border-radius: 5px;
+      padding: 8px 18px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .back-link:hover {
+      background: #0f62fe;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Detection Result</h1>
+    <div class="result">
+      {% if result == "Polluted" %}
+        Pollution Detected!<br>
+        <span style="font-size:0.95em;">
+          Authorities have been notified.<br>
+          Thank you for helping keep rivers clean.
+        </span>
+      {% else %}
+        No Pollution Detected.<br>
+        <span style="font-size:0.95em;">
+          Great job! This river area looks clean.
+        </span>
+      {% endif %}
+    </div>
+    <div>
+      <strong>Reported Location:</strong><br>
+      <span>{{ location }}</span>
+    </div>
+    <a href="{{ url_for('index') }}" class="back-link">Scan Another Photo</a>
+  </div>
+  <div class="footer">
+    &copy; 2025 RiverClean &mdash; For a cleaner planet 🌎
+  </div>
+</body>
+</html>

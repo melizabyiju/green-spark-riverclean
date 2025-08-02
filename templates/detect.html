@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RiverClean – Detect River Waste</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #eaf6fb;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 420px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.11);
+      padding: 32px 24px 24px 24px;
+    }
+    h1 {
+      color: #0f62fe;
+      margin-bottom: 12px;
+      text-align: center;
+      font-size: 2em;
+    }
+    p {
+      text-align: center;
+      color: #555;
+      margin-bottom: 16px;
+    }
+    label {
+      font-weight: 500;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .input-group {
+      margin-bottom: 16px;
+    }
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #b2d6f6;
+      border-radius: 5px;
+      margin-top: 4px;
+      margin-bottom: 4px;
+      font-size: 1em;
+    }
+    button {
+      width: 100%;
+      background: #0f62fe;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 12px 0;
+      font-size: 1.1em;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:disabled {
+      background: #b2d6f6;
+      cursor: not-allowed;
+    }
+    .result {
+      margin-top: 24px;
+      padding: 14px;
+      background: #f1f8fe;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 1.05em;
+    }
+    .success {
+      color: #218c36;
+      font-weight: bold;
+    }
+    .error {
+      color: #b00020;
+      font-weight: bold;
+    }
+    .image-preview {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .image-preview img {
+      max-width: 90%;
+      max-height: 200px;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #777;
+      font-size: 0.95em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>RiverClean</h1>
+    <p>
+      Upload your river photo to detect visible waste and help keep rivers clean.<br>
+      <small>AI analyzes your image and notifies authorities if pollution is detected.</small>
+    </p>
+    <form id="uploadForm">
+      <div class="input-group">
+        <label for="username">Your Name (for reward):</label>
+        <input type="text" id="username" name="username" placeholder="Enter your name" autocomplete="name" required>
+      </div>
+      <div class="input-group">
+        <label for="photo">River Photo:</label>
+        <input type="file" id="photo" name="photo" accept="image/*" required>
+      </div>
+      <div class="image-preview" id="imagePreview" style="display:none;">
+        <img id="previewImg" src="" alt="Image Preview" />
+      </div>
+      <button type="submit" id="submitBtn">Detect Waste</button>
+    </form>
+    <div class="result" id="result" style="display:none;"></div>
+  </div>
+  <div class="footer">
+    &copy; 2025 RiverClean &mdash; A student project for a cleaner planet 🌎
+  </div>
+  <script>
+    // Image preview
+    const photoInput = document.getElementById('photo');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    photoInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImg.src = e.target.result;
+          imagePreview.style.display = 'flex';
+        };
+        reader.readAsDataURL(this.files[0]);
+      } else {
+        imagePreview.style.display = 'none';
+        previewImg.src = '';
+      }
+    });
+
+    // Form submit
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const resultDiv = document.getElementById('result');
+      resultDiv.style.display = 'none';
+      resultDiv.innerHTML = '';
+      const username = document.getElementById('username').value.trim();
+      const photo = document.getElementById('photo').files[0];
+      if (!username || !photo) {
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<span class="error">Please provide your name and select a river photo.</span>';
+        return;
+      }
+
+      // Show loading state
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Analyzing...';
+
+      // Prepare form data for backend (assuming /detect endpoint)
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('photo', photo);
+
+      try {
+        // Change the URL below to your backend endpoint (Flask, FastAPI, etc.)
+        const resp = await fetch('/detect', { method: 'POST', body: formData });
+        if (!resp.ok) throw new Error('Server error');
+        const data = await resp.json();
+        let html = '';
+        if (data.error) {
+          html = `<span class="error">${data.error}</span>`;
+        } else {
+          html += `<span class="success">Detected: ${data.category}</span><br>`;
+          if (data.gps) {
+            html += `<small>GPS: ${data.gps}</small><br>`;
+          }
+          html += `<small>Thank you, <b>${username}</b>! You earned 1 RiverClean point! 🌟</small>`;
+          if (data.authorities_notified) {
+            html += `<br><span style="color:#0f62fe;">Authorities notified!</span>`;
+          }
+        }
+        resultDiv.innerHTML = html;
+        resultDiv.style.display = 'block';
+      } catch (err) {
+        resultDiv.innerHTML = '<span class="error">Could not connect to backend. Please try again later.</span>';
+        resultDiv.style.display = 'block';
+      }
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Detect Waste';
+    });
+  </script>
+</body>
+</html>
